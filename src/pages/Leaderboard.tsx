@@ -9,7 +9,7 @@ type SortKey = 'winrate' | 'avg_placement' | 'games' | 'wins'
 
 export default function Leaderboard() {
   const { data, loading, error } = useAsync(getPlayerStats, [])
-  const [sort, setSort] = useState<SortKey>('winrate')
+  const [sort, setSort] = useState<SortKey>('avg_placement')
 
   if (loading) return <Loading />
   if (error) return <ErrorBox message={error} />
