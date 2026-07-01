@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { getPlayerResults, getPlayerStats } from '../lib/api'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
+import { LeaderName } from '../components/LeaderName'
 import { avg, formatDate, pct, placementLabel } from '../lib/format'
 import { StatCards } from './LeaderDetail'
 
@@ -21,9 +22,14 @@ export default function PlayerProfile() {
   const { stat, results } = data
 
   // Best / most-played leaders for this player.
-  const byLeader = new Map<string, { name: string; id: string; games: number; wins: number }>()
+  const byLeader = new Map<
+    string,
+    { name: string; id: string; imageUrl: string | null; games: number; wins: number }
+  >()
   for (const r of results) {
-    const e = byLeader.get(r.leader_id) ?? { name: r.leader_name, id: r.leader_id, games: 0, wins: 0 }
+    const e =
+      byLeader.get(r.leader_id) ??
+      { name: r.leader_name, id: r.leader_id, imageUrl: r.image_url, games: 0, wins: 0 }
     e.games++
     if (r.placement === 1) e.wins++
     byLeader.set(r.leader_id, e)
@@ -67,9 +73,7 @@ export default function PlayerProfile() {
                 {leaders.map((l) => (
                   <tr key={l.id} className="border-t">
                     <td className="p-2">
-                      <Link className="text-amber-700 hover:underline" to={`/leaders/${l.id}`}>
-                        {l.name}
-                      </Link>
+                      <LeaderName id={l.id} name={l.name} imageUrl={l.imageUrl} />
                     </td>
                     <td className="p-2 text-right tabular-nums">{l.games}</td>
                     <td className="p-2 text-right tabular-nums">{l.wins}</td>
@@ -92,9 +96,7 @@ export default function PlayerProfile() {
               <li key={r.id} className="flex items-center justify-between p-2">
                 <span>
                   {placementLabel(r.placement)} as{' '}
-                  <Link className="text-amber-700 hover:underline" to={`/leaders/${r.leader_id}`}>
-                    {r.leader_name}
-                  </Link>
+                  <LeaderName id={r.leader_id} name={r.leader_name} imageUrl={r.image_url} />
                 </span>
                 <span className="text-gray-400">{formatDate(r.played_on)}</span>
               </li>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { getLeaderStats } from '../lib/api'
 import { Bar, ErrorBox, Loading, useAsync } from '../components/ui'
+import { LeaderName } from '../components/LeaderName'
 import { avg, pct } from '../lib/format'
 
 type SortKey = 'winrate' | 'avg_placement' | 'games'
@@ -64,9 +64,7 @@ export default function LeaderList() {
             {sorted.map((l) => (
               <tr key={l.leader_id} className="border-t">
                 <td className="p-2 font-medium">
-                  <Link className="text-amber-700 hover:underline" to={`/leaders/${l.leader_id}`}>
-                    {l.leader_name}
-                  </Link>
+                  <LeaderName id={l.leader_id} name={l.leader_name} imageUrl={l.image_url} />
                 </td>
                 <td className="p-2 text-right tabular-nums">{l.games}</td>
                 <td className="p-2 text-right tabular-nums">{l.wins}</td>

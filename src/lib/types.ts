@@ -9,6 +9,7 @@ export interface Leader {
   id: string
   name: string
   expansion: string | null
+  image_url: string | null
   hidden: boolean
   created_at: string
 }
@@ -30,6 +31,7 @@ export interface ResultDetail {
   player_name: string
   leader_id: string
   leader_name: string
+  image_url: string | null
 }
 
 /** A game plus its 4 result rows, assembled for display. */
@@ -54,6 +56,7 @@ export interface LeaderStats {
   leader_id: string
   leader_name: string
   expansion: string | null
+  image_url: string | null
   hidden: boolean
   games: number
   wins: number
