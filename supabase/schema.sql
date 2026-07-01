@@ -163,15 +163,16 @@ with (security_invoker = on) as
 
 create or replace view leader_stats
 with (security_invoker = on) as
-  select l.id as leader_id, l.name as leader_name, l.expansion, l.image_url, l.hidden,
+  select l.id as leader_id, l.name as leader_name, l.expansion, l.hidden,
          count(rd.id) as games,
          count(*) filter (where rd.placement = 1) as wins,
          coalesce(round(count(*) filter (where rd.placement = 1)::numeric
                         / nullif(count(rd.id), 0), 4), 0) as winrate,
-         round(avg(rd.placement), 2) as avg_placement
+         round(avg(rd.placement), 2) as avg_placement,
+         l.image_url
   from leaders l
   left join results_detail rd on rd.leader_id = l.id
-  group by l.id, l.name, l.expansion, l.image_url, l.hidden;
+  group by l.id, l.name, l.expansion, l.hidden, l.image_url;
 
 -- ---------------------------------------------------------------------------
 -- Row Level Security: fully open (anyone can read & write). The audit_log +
