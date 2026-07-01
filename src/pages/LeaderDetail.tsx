@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { getLeaderResults, getLeaderStats } from '../lib/api'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
+import { LeaderName } from '../components/LeaderName'
 import { avg, formatDate, pct, placementLabel } from '../lib/format'
 
 export default function LeaderDetail() {
@@ -36,7 +37,12 @@ export default function LeaderDetail() {
           &larr; Leaders
         </Link>
         <h1 className="mt-1 text-xl font-bold">
-          {stat.leader_name}
+          <LeaderName
+            id={id}
+            name={stat.leader_name}
+            imageUrl={stat.image_url}
+            className="hover:underline"
+          />
           {stat.expansion && (
             <span className="ml-2 text-sm font-normal text-gray-400">{stat.expansion}</span>
           )}

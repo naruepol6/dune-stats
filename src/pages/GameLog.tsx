@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getGames, softDeleteGame } from '../lib/api'
 import type { GameWithResults } from '../lib/types'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
+import { LeaderName } from '../components/LeaderName'
 import { formatDate, placementLabel } from '../lib/format'
 
 export default function GameLog() {
@@ -76,9 +77,12 @@ export default function GameLog() {
                           {r.player_name}
                         </Link>
                       </span>
-                      <Link className="text-gray-600 hover:underline" to={`/leaders/${r.leader_id}`}>
-                        {r.leader_name}
-                      </Link>
+                      <LeaderName
+                        id={r.leader_id}
+                        name={r.leader_name}
+                        imageUrl={r.image_url}
+                        className="text-gray-600 hover:underline"
+                      />
                     </li>
                   ))}
               </ol>
