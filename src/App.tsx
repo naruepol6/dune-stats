@@ -1,4 +1,5 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
+import { useTheme } from './lib/theme'
 import Leaderboard from './pages/Leaderboard'
 import GameLog from './pages/GameLog'
 import EnterGame from './pages/EnterGame'
@@ -8,12 +9,15 @@ import LeaderDetail from './pages/LeaderDetail'
 import Roster from './pages/Roster'
 
 function Nav() {
+  const { theme, toggle } = useTheme()
   const link = ({ isActive }: { isActive: boolean }) =>
     `px-3 py-2 text-sm font-medium rounded ${
-      isActive ? 'bg-amber-600 text-white' : 'text-gray-700 hover:bg-amber-100'
+      isActive
+        ? 'bg-amber-600 text-white'
+        : 'text-gray-700 hover:bg-amber-100 dark:text-gray-300 dark:hover:bg-gray-700'
     }`
   return (
-    <nav className="sticky top-0 z-10 flex flex-wrap items-center gap-1 border-b bg-white px-3 py-2 shadow-sm">
+    <nav className="sticky top-0 z-10 flex flex-wrap items-center gap-1 border-b bg-white px-3 py-2 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <span className="mr-2 font-bold text-amber-700">Dune Stats</span>
       <NavLink to="/" end className={link}>
         Leaderboard
@@ -30,13 +34,22 @@ function Nav() {
       <NavLink to="/enter" className={({ isActive }) => `${link({ isActive })} ml-auto bg-amber-600 text-white`}>
         + Add game
       </NavLink>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        className="rounded px-3 py-2 text-sm text-gray-700 hover:bg-amber-100 dark:text-gray-300 dark:hover:bg-gray-700"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
     </nav>
   )
 }
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       <Nav />
       <main className="mx-auto max-w-3xl p-3 sm:p-4">
         <Routes>

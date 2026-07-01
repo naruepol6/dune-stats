@@ -44,7 +44,7 @@ export default function LeaderDetail() {
             className="hover:underline"
           />
           {stat.expansion && (
-            <span className="ml-2 text-sm font-normal text-gray-400">{stat.expansion}</span>
+            <span className="ml-2 text-sm font-normal text-gray-400 dark:text-gray-500">{stat.expansion}</span>
           )}
         </h1>
       </div>
@@ -61,9 +61,9 @@ export default function LeaderDetail() {
       {players.length > 0 && (
         <div>
           <h2 className="mb-2 font-semibold">Played by</h2>
-          <div className="overflow-hidden rounded border bg-white">
+          <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500">
+              <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th className="p-2">Player</th>
                   <th className="p-2 text-right">Games</th>
@@ -72,7 +72,7 @@ export default function LeaderDetail() {
               </thead>
               <tbody>
                 {players.map((p) => (
-                  <tr key={p.id} className="border-t">
+                  <tr key={p.id} className="border-t dark:border-gray-700">
                     <td className="p-2">
                       <Link className="text-amber-700 hover:underline" to={`/players/${p.id}`}>
                         {p.name}
@@ -91,9 +91,9 @@ export default function LeaderDetail() {
       <div>
         <h2 className="mb-2 font-semibold">Game history</h2>
         {results.length === 0 ? (
-          <p className="text-sm text-gray-500">Never played yet.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Never played yet.</p>
         ) : (
-          <ul className="divide-y rounded border bg-white text-sm">
+          <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
             {results.map((r) => (
               <li key={r.id} className="flex items-center justify-between p-2">
                 <span>
@@ -102,7 +102,7 @@ export default function LeaderDetail() {
                     {r.player_name}
                   </Link>
                 </span>
-                <span className="text-gray-400">{formatDate(r.played_on)}</span>
+                <span className="text-gray-400 dark:text-gray-500">{formatDate(r.played_on)}</span>
               </li>
             ))}
           </ul>
@@ -116,9 +116,9 @@ export function StatCards({ items }: { items: [string, string][] }) {
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
       {items.map(([label, value]) => (
-        <div key={label} className="rounded border bg-white p-3 text-center">
+        <div key={label} className="rounded border bg-white p-3 text-center dark:border-gray-700 dark:bg-gray-800">
           <div className="text-lg font-bold tabular-nums">{value}</div>
-          <div className="text-xs uppercase text-gray-500">{label}</div>
+          <div className="text-xs uppercase text-gray-500 dark:text-gray-400">{label}</div>
         </div>
       ))}
     </div>

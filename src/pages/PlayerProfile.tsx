@@ -59,9 +59,9 @@ export default function PlayerProfile() {
       {leaders.length > 0 && (
         <div>
           <h2 className="mb-2 font-semibold">Leaders played</h2>
-          <div className="overflow-hidden rounded border bg-white">
+          <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500">
+              <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th className="p-2">Leader</th>
                   <th className="p-2 text-right">Games</th>
@@ -71,7 +71,7 @@ export default function PlayerProfile() {
               </thead>
               <tbody>
                 {leaders.map((l) => (
-                  <tr key={l.id} className="border-t">
+                  <tr key={l.id} className="border-t dark:border-gray-700">
                     <td className="p-2">
                       <LeaderName id={l.id} name={l.name} imageUrl={l.imageUrl} />
                     </td>
@@ -89,16 +89,16 @@ export default function PlayerProfile() {
       <div>
         <h2 className="mb-2 font-semibold">Placement history</h2>
         {results.length === 0 ? (
-          <p className="text-sm text-gray-500">No games yet.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No games yet.</p>
         ) : (
-          <ul className="divide-y rounded border bg-white text-sm">
+          <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
             {results.map((r) => (
               <li key={r.id} className="flex items-center justify-between p-2">
                 <span>
                   {placementLabel(r.placement)} as{' '}
                   <LeaderName id={r.leader_id} name={r.leader_name} imageUrl={r.image_url} />
                 </span>
-                <span className="text-gray-400">{formatDate(r.played_on)}</span>
+                <span className="text-gray-400 dark:text-gray-500">{formatDate(r.played_on)}</span>
               </li>
             ))}
           </ul>

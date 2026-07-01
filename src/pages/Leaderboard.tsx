@@ -24,10 +24,10 @@ export default function Leaderboard() {
     <section>
       <div className="mb-3 flex items-center justify-between">
         <h1 className="text-xl font-bold">Leaderboard</h1>
-        <label className="text-sm text-gray-600">
+        <label className="text-sm text-gray-600 dark:text-gray-400">
           Sort by{' '}
           <select
-            className="rounded border px-2 py-1"
+            className="rounded border px-2 py-1 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
           >
@@ -42,9 +42,9 @@ export default function Leaderboard() {
       {sorted.length === 0 ? (
         <Empty />
       ) : (
-        <div className="overflow-hidden rounded border bg-white">
+        <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500">
+            <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th className="p-2">#</th>
                 <th className="p-2">Player</th>
@@ -56,7 +56,7 @@ export default function Leaderboard() {
             </thead>
             <tbody>
               {sorted.map((p: PlayerStats, i) => (
-                <tr key={p.player_id} className="border-t">
+                <tr key={p.player_id} className="border-t dark:border-gray-700">
                   <td className="p-2 text-gray-400">{i + 1}</td>
                   <td className="p-2 font-medium">
                     <Link className="text-amber-700 hover:underline" to={`/players/${p.player_id}`}>
@@ -80,7 +80,7 @@ export default function Leaderboard() {
           </table>
         </div>
       )}
-      <p className="mt-2 text-xs text-gray-400">
+      <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
         GP = games played, W = wins (1st place), Avg = average placement (lower is better).
       </p>
     </section>
@@ -89,7 +89,7 @@ export default function Leaderboard() {
 
 function Empty() {
   return (
-    <div className="rounded border bg-white p-6 text-center text-sm text-gray-500">
+    <div className="rounded border bg-white p-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
       No games recorded yet.{' '}
       <Link to="/enter" className="text-amber-700 hover:underline">
         Add the first game
