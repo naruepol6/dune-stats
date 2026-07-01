@@ -8,7 +8,7 @@ type SortKey = 'winrate' | 'avg_placement' | 'games'
 
 export default function LeaderList() {
   const { data, loading, error } = useAsync(getLeaderStats, [])
-  const [sort, setSort] = useState<SortKey>('winrate')
+  const [sort, setSort] = useState<SortKey>('avg_placement')
   const [hidePlayed0, setHidePlayed0] = useState(true)
 
   if (loading) return <Loading />
@@ -25,7 +25,7 @@ export default function LeaderList() {
     <section>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-xl font-bold">Leaders</h1>
-        <div className="flex items-center gap-3 text-sm text-gray-600">
+        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
           <label className="flex items-center gap-1">
             <input
               type="checkbox"
@@ -37,7 +37,7 @@ export default function LeaderList() {
           <label>
             Sort{' '}
             <select
-              className="rounded border px-2 py-1"
+              className="rounded border px-2 py-1 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
             >
@@ -49,9 +49,9 @@ export default function LeaderList() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded border bg-white">
+      <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500">
+          <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th className="p-2">Leader</th>
               <th className="p-2 text-right">GP</th>
@@ -62,7 +62,7 @@ export default function LeaderList() {
           </thead>
           <tbody>
             {sorted.map((l) => (
-              <tr key={l.leader_id} className="border-t">
+              <tr key={l.leader_id} className="border-t dark:border-gray-700">
                 <td className="p-2 font-medium">
                   <LeaderName id={l.leader_id} name={l.leader_name} imageUrl={l.image_url} />
                 </td>
