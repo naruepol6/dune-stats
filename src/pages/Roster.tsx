@@ -54,7 +54,7 @@ function PlayerRoster() {
         }}
       >
         <input
-          className="flex-1 rounded border px-2 py-1.5 text-sm"
+          className="flex-1 rounded border px-2 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           placeholder="New player name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -66,7 +66,7 @@ function PlayerRoster() {
           Add
         </button>
       </form>
-      <ul className="divide-y rounded border bg-white text-sm">
+      <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
         {players.map((p) => (
           <li key={p.id} className="flex items-center justify-between p-2">
             <span className={p.hidden ? 'text-gray-400 line-through' : ''}>{p.name}</span>
@@ -81,7 +81,7 @@ function PlayerRoster() {
                 Rename
               </button>
               <button
-                className="text-gray-600 hover:underline"
+                className="text-gray-600 hover:underline dark:text-gray-400"
                 onClick={() => act(() => setPlayerHidden(p.id, !p.hidden))}
               >
                 {p.hidden ? 'Unhide' : 'Hide'}
@@ -89,9 +89,9 @@ function PlayerRoster() {
             </span>
           </li>
         ))}
-        {players.length === 0 && <li className="p-3 text-gray-500">No players yet.</li>}
+        {players.length === 0 && <li className="p-3 text-gray-500 dark:text-gray-400">No players yet.</li>}
       </ul>
-      <p className="mt-1 text-xs text-gray-400">
+      <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
         Hidden players stay out of the dropdowns but keep their stats and game history.
       </p>
     </div>
@@ -135,13 +135,13 @@ function LeaderRoster() {
         }}
       >
         <input
-          className="min-w-40 flex-1 rounded border px-2 py-1.5 text-sm"
+          className="min-w-40 flex-1 rounded border px-2 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           placeholder="New leader name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <input
-          className="w-36 rounded border px-2 py-1.5 text-sm"
+          className="w-36 rounded border px-2 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           placeholder="Expansion"
           value={expansion}
           onChange={(e) => setExpansion(e.target.value)}
@@ -153,12 +153,12 @@ function LeaderRoster() {
           Add
         </button>
       </form>
-      <ul className="divide-y rounded border bg-white text-sm">
+      <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
         {leaders.map((l) => (
           <li key={l.id} className="flex items-center justify-between p-2">
             <span className={l.hidden ? 'text-gray-400 line-through' : ''}>
               {l.name}
-              {l.expansion && <span className="ml-2 text-xs text-gray-400">{l.expansion}</span>}
+              {l.expansion && <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">{l.expansion}</span>}
             </span>
             <span className="flex gap-3 text-xs">
               <button
@@ -171,7 +171,7 @@ function LeaderRoster() {
                 Rename
               </button>
               <button
-                className="text-gray-600 hover:underline"
+                className="text-gray-600 hover:underline dark:text-gray-400"
                 onClick={() => act(() => setLeaderHidden(l.id, !l.hidden))}
               >
                 {l.hidden ? 'Unhide' : 'Hide'}
@@ -179,9 +179,9 @@ function LeaderRoster() {
             </span>
           </li>
         ))}
-        {leaders.length === 0 && <li className="p-3 text-gray-500">No leaders yet.</li>}
+        {leaders.length === 0 && <li className="p-3 text-gray-500 dark:text-gray-400">No leaders yet.</li>}
       </ul>
-      <p className="mt-1 text-xs text-gray-400">
+      <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
         Hidden leaders stay out of the dropdowns but keep their stats.
       </p>
     </div>

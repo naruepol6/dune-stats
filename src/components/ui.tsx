@@ -26,12 +26,12 @@ export function useAsync<T>(fn: () => Promise<T>, deps: unknown[]) {
 }
 
 export function Loading() {
-  return <p className="p-4 text-sm text-gray-500">Loading...</p>
+  return <p className="p-4 text-sm text-gray-500 dark:text-gray-400">Loading...</p>
 }
 
 export function ErrorBox({ message }: { message: string }) {
   return (
-    <p className="m-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+    <p className="m-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
       {message}
     </p>
   )
@@ -41,7 +41,7 @@ export function ErrorBox({ message }: { message: string }) {
 export function Bar({ value }: { value: number }) {
   const w = Math.max(0, Math.min(1, value)) * 100
   return (
-    <div className="h-2 w-full overflow-hidden rounded bg-gray-200">
+    <div className="h-2 w-full overflow-hidden rounded bg-gray-200 dark:bg-gray-700">
       <div className="h-full rounded bg-amber-500" style={{ width: `${w}%` }} />
     </div>
   )

@@ -111,8 +111,8 @@ export default function SearchSelect({
         role="combobox"
         aria-expanded={open}
         autoComplete="off"
-        className={`w-full rounded border px-2 py-1.5 text-sm focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600 ${
-          invalid ? 'border-red-400 bg-red-50' : ''
+        className={`w-full rounded border px-2 py-1.5 text-sm focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 ${
+          invalid ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-950' : ''
         }`}
         placeholder={placeholder}
         value={inputValue}
@@ -130,10 +130,10 @@ export default function SearchSelect({
       {open && (
         <ul
           ref={listRef}
-          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded border bg-white py-1 text-sm shadow-lg"
+          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded border bg-white py-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
         >
           {matches.length === 0 ? (
-            <li className="px-2 py-1.5 text-gray-400">No matches</li>
+            <li className="px-2 py-1.5 text-gray-400 dark:text-gray-500">No matches</li>
           ) : (
             matches.map((o, i) => (
               <li
@@ -146,7 +146,7 @@ export default function SearchSelect({
                 }}
                 onMouseEnter={() => setHighlight(i)}
                 className={`cursor-pointer px-2 py-1.5 ${
-                  i === highlight ? 'bg-amber-100' : ''
+                  i === highlight ? 'bg-amber-100 dark:bg-gray-700' : ''
                 } ${o.id === value ? 'font-medium text-amber-700' : ''}`}
               >
                 {o.label}

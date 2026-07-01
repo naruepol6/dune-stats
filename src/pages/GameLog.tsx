@@ -41,15 +41,15 @@ export default function GameLog() {
       </div>
 
       {games.length === 0 ? (
-        <div className="rounded border bg-white p-6 text-center text-sm text-gray-500">
+        <div className="rounded border bg-white p-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
           No games yet.
         </div>
       ) : (
         <ul className="space-y-3">
           {games.map((g: GameWithResults) => (
-            <li key={g.id} className="rounded border bg-white">
-              <div className="flex items-center justify-between border-b px-3 py-2">
-                <span className="text-sm font-medium text-gray-500">{formatDate(g.played_on)}</span>
+            <li key={g.id} className="rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
+              <div className="flex items-center justify-between border-b px-3 py-2 dark:border-gray-700">
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{formatDate(g.played_on)}</span>
                 <span className="flex gap-2 text-sm">
                   <button
                     className="text-amber-700 hover:underline"
@@ -66,7 +66,7 @@ export default function GameLog() {
                   </button>
                 </span>
               </div>
-              <ol className="divide-y text-sm">
+              <ol className="divide-y text-sm dark:divide-gray-700">
                 {[...g.results]
                   .sort((a, b) => a.placement - b.placement)
                   .map((r) => (
@@ -81,12 +81,12 @@ export default function GameLog() {
                         id={r.leader_id}
                         name={r.leader_name}
                         imageUrl={r.image_url}
-                        className="text-gray-600 hover:underline"
+                        className="text-gray-600 hover:underline dark:text-gray-400"
                       />
                     </li>
                   ))}
               </ol>
-              {g.note && <p className="border-t px-3 py-1.5 text-xs text-gray-500">{g.note}</p>}
+              {g.note && <p className="border-t px-3 py-1.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">{g.note}</p>}
             </li>
           ))}
         </ul>
