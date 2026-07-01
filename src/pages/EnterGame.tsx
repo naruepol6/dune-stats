@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createGame, getGame, getLeaders, getPlayers, updateGame } from '../lib/api'
 import type { Leader, Player, ResultInput } from '../lib/types'
 import { ErrorBox, Loading } from '../components/ui'
+import SearchSelect from '../components/SearchSelect'
 import { placementLabel } from '../lib/format'
 
 interface Row {
@@ -71,6 +72,15 @@ export default function EnterGame() {
 
   const dupPlayers = useMemo(() => findDups(rows.map((r) => r.player_id)), [rows])
   const dupLeaders = useMemo(() => findDups(rows.map((r) => r.leader_id)), [rows])
+
+  const playerOptions = useMemo(
+    () => players.map((p) => ({ id: p.id, label: p.name })),
+    [players],
+  )
+  const leaderOptions = useMemo(
+    () => leaders.map((l) => ({ id: l.id, label: l.name })),
+    [leaders],
+  )
 
   const complete = rows.every((r) => r.player_id && r.leader_id)
   const valid = complete && dupPlayers.size === 0 && dupLeaders.size === 0 && Boolean(playedOn)
@@ -147,34 +157,20 @@ export default function EnterGame() {
               <span className="w-8 shrink-0 text-center text-lg" title={`${i + 1} place`}>
                 {placementLabel(i + 1)}
               </span>
-              <select
-                className={`min-w-0 flex-1 rounded border px-2 py-1.5 text-sm ${
-                  dupPlayers.has(row.player_id) ? 'border-red-400 bg-red-50' : ''
-                }`}
+              <SearchSelect
+                options={playerOptions}
                 value={row.player_id}
-                onChange={(e) => setRow(i, { player_id: e.target.value })}
-              >
-                <option value="">- player -</option>
-                {players.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                className={`min-w-0 flex-1 rounded border px-2 py-1.5 text-sm ${
-                  dupLeaders.has(row.leader_id) ? 'border-red-400 bg-red-50' : ''
-                }`}
+                onChange={(player_id) => setRow(i, { player_id })}
+                placeholder="- player -"
+                invalid={dupPlayers.has(row.player_id)}
+              />
+              <SearchSelect
+                options={leaderOptions}
                 value={row.leader_id}
-                onChange={(e) => setRow(i, { leader_id: e.target.value })}
-              >
-                <option value="">- leader -</option>
-                {leaders.map((l) => (
-                  <option key={l.id} value={l.id}>
-                    {l.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(leader_id) => setRow(i, { leader_id })}
+                placeholder="- leader -"
+                invalid={dupLeaders.has(row.leader_id)}
+              />
             </div>
           ))}
         </div>
