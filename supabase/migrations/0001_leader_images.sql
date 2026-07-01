@@ -37,6 +37,7 @@ update leaders set image_url = 'https://dunecardshub.com/thumbnails/rise-of-ix-l
 update leaders set image_url = 'https://dunecardshub.com/thumbnails/uprising-leader-princess-irulan.webp' where name = 'Princess Irulan';
 update leaders set image_url = 'https://dunecardshub.com/thumbnails/uprising-leader-shaddam-corrino-iv.webp' where name = 'Shaddam Corrino IV';
 update leaders set image_url = 'https://dunecardshub.com/thumbnails/uprising-leader-staban-tuek.webp' where name = 'Staban Tuek';
+update leaders set image_url = 'https://dunecardshub.com/thumbnails/bloodlines-leader-steersman-y-rkoon.webp' where name = 'Steersman Y''rkoon';
 update leaders set image_url = 'https://dunecardshub.com/thumbnails/rise-of-ix-leader-tessia-vernius.webp' where name = 'Tessia Vernius';
 
 -- ---------------------------------------------------------------------------
