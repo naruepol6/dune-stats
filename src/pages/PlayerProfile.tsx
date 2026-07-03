@@ -1,10 +1,11 @@
 import { Link, useParams } from 'react-router-dom'
 import { getPlayerResults, getPlayerStats } from '../lib/api'
-import { ErrorBox, Loading, useAsync } from '../components/ui'
+import { Card, ErrorBox, Loading, StatCards, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
 import { RankMedal } from '../components/icons'
 import { avg, formatDate, pct } from '../lib/format'
-import { StatCards } from './LeaderDetail'
+
+const linkCls = 'text-cyan-700 hover:underline dark:text-cyan-400'
 
 export default function PlayerProfile() {
   const { id = '' } = useParams()
@@ -42,10 +43,10 @@ export default function PlayerProfile() {
   return (
     <section className="space-y-5">
       <div>
-        <Link to="/" className="text-sm text-amber-700 hover:underline">
+        <Link to="/" className={`text-sm ${linkCls}`}>
           &larr; Leaderboard
         </Link>
-        <h1 className="mt-1 text-xl font-bold">{stat.player_name}</h1>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight">{stat.player_name}</h1>
       </div>
 
       <StatCards
@@ -60,29 +61,43 @@ export default function PlayerProfile() {
       {leaders.length > 0 && (
         <div>
           <h2 className="mb-2 font-semibold">Leaders played</h2>
-          <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
+          {/* Desktop table */}
+          <Card className="hidden overflow-hidden sm:block">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+              <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
                 <tr>
-                  <th className="p-2">Leader</th>
-                  <th className="p-2 text-right">Games</th>
-                  <th className="p-2 text-right">Wins</th>
-                  <th className="p-2 text-right">Win rate</th>
+                  <th className="p-3 font-medium">Leader</th>
+                  <th className="p-3 text-right font-medium">Games</th>
+                  <th className="p-3 text-right font-medium">Wins</th>
+                  <th className="p-3 text-right font-medium">Win rate</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {leaders.map((l) => (
-                  <tr key={l.id} className="border-t dark:border-gray-700">
-                    <td className="p-2">
+                  <tr key={l.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td className="p-3">
                       <LeaderName id={l.id} name={l.name} imageUrl={l.imageUrl} />
                     </td>
-                    <td className="p-2 text-right tabular-nums">{l.games}</td>
-                    <td className="p-2 text-right tabular-nums">{l.wins}</td>
-                    <td className="p-2 text-right tabular-nums">{pct(l.wins / l.games)}</td>
+                    <td className="p-3 text-right tabular-nums">{l.games}</td>
+                    <td className="p-3 text-right tabular-nums">{l.wins}</td>
+                    <td className="p-3 text-right tabular-nums">{pct(l.wins / l.games)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </Card>
+          {/* Mobile cards */}
+          <div className="space-y-2 sm:hidden">
+            {leaders.map((l) => (
+              <Card key={l.id} className="flex items-center justify-between p-3">
+                <LeaderName id={l.id} name={l.name} imageUrl={l.imageUrl} />
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  <b className="tabular-nums text-slate-700 dark:text-slate-200">{l.wins}</b>/
+                  <b className="tabular-nums text-slate-700 dark:text-slate-200">{l.games}</b>{' '}
+                  ({pct(l.wins / l.games)})
+                </span>
+              </Card>
+            ))}
           </div>
         </div>
       )}
@@ -90,19 +105,21 @@ export default function PlayerProfile() {
       <div>
         <h2 className="mb-2 font-semibold">Placement history</h2>
         {results.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">No games yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No games yet.</p>
         ) : (
-          <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
-            {results.map((r) => (
-              <li key={r.id} className="flex items-center justify-between p-2">
-                <span className="flex items-center gap-1.5">
-                  <RankMedal place={r.placement} /> as{' '}
-                  <LeaderName id={r.leader_id} name={r.leader_name} imageUrl={r.image_url} />
-                </span>
-                <span className="text-gray-400 dark:text-gray-500">{formatDate(r.played_on)}</span>
-              </li>
-            ))}
-          </ul>
+          <Card className="overflow-hidden">
+            <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-800">
+              {results.map((r) => (
+                <li key={r.id} className="flex items-center justify-between p-3">
+                  <span className="flex items-center gap-1.5">
+                    <RankMedal place={r.placement} /> as{' '}
+                    <LeaderName id={r.leader_id} name={r.leader_name} imageUrl={r.image_url} />
+                  </span>
+                  <span className="text-slate-400 dark:text-slate-500">{formatDate(r.played_on)}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
         )}
       </div>
     </section>

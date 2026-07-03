@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getLeaderStats } from '../lib/api'
-import { Bar, ErrorBox, Loading, useAsync } from '../components/ui'
+import { Bar, Card, ErrorBox, Loading, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
 import { avg, pct } from '../lib/format'
 
@@ -23,12 +23,13 @@ export default function LeaderList() {
 
   return (
     <section>
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-xl font-bold">Leaders</h1>
-        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-          <label className="flex items-center gap-1">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold tracking-tight">Leaders</h1>
+        <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+          <label className="flex items-center gap-1.5">
             <input
               type="checkbox"
+              className="accent-cyan-600"
               checked={hidePlayed0}
               onChange={(e) => setHidePlayed0(e.target.checked)}
             />
@@ -37,7 +38,7 @@ export default function LeaderList() {
           <label>
             Sort{' '}
             <select
-              className="rounded border px-2 py-1 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
             >
@@ -49,26 +50,27 @@ export default function LeaderList() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
+      {/* Desktop table */}
+      <Card className="hidden overflow-hidden sm:block">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
             <tr>
-              <th className="p-2">Leader</th>
-              <th className="p-2 text-right">GP</th>
-              <th className="p-2 text-right">W</th>
-              <th className="p-2">Win rate</th>
-              <th className="p-2 text-right">Avg</th>
+              <th className="p-3 font-medium">Leader</th>
+              <th className="p-3 text-right font-medium">GP</th>
+              <th className="p-3 text-right font-medium">W</th>
+              <th className="p-3 font-medium">Win rate</th>
+              <th className="p-3 text-right font-medium">Avg</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {sorted.map((l) => (
-              <tr key={l.leader_id} className="border-t dark:border-gray-700">
-                <td className="p-2 font-medium">
+              <tr key={l.leader_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                <td className="p-3 font-medium">
                   <LeaderName id={l.leader_id} name={l.leader_name} imageUrl={l.image_url} />
                 </td>
-                <td className="p-2 text-right tabular-nums">{l.games}</td>
-                <td className="p-2 text-right tabular-nums">{l.wins}</td>
-                <td className="p-2">
+                <td className="p-3 text-right tabular-nums">{l.games}</td>
+                <td className="p-3 text-right tabular-nums">{l.wins}</td>
+                <td className="p-3">
                   <div className="flex items-center gap-2">
                     <span className="w-9 tabular-nums">{pct(l.winrate)}</span>
                     <div className="flex-1">
@@ -76,11 +78,39 @@ export default function LeaderList() {
                     </div>
                   </div>
                 </td>
-                <td className="p-2 text-right tabular-nums">{avg(l.avg_placement)}</td>
+                <td className="p-3 text-right tabular-nums">{avg(l.avg_placement)}</td>
               </tr>
             ))}
           </tbody>
         </table>
+      </Card>
+
+      {/* Mobile cards */}
+      <div className="space-y-2 sm:hidden">
+        {sorted.map((l) => (
+          <Card key={l.leader_id} className="p-3">
+            <div className="flex items-center justify-between">
+              <LeaderName id={l.leader_id} name={l.leader_name} imageUrl={l.image_url} />
+              <span className="text-sm tabular-nums text-slate-500 dark:text-slate-400">
+                avg {avg(l.avg_placement)}
+              </span>
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="w-10 text-xs tabular-nums text-slate-500 dark:text-slate-400">
+                {pct(l.winrate)}
+              </span>
+              <Bar value={l.winrate} />
+            </div>
+            <div className="mt-2 flex gap-4 text-xs text-slate-500 dark:text-slate-400">
+              <span>
+                GP <b className="tabular-nums text-slate-700 dark:text-slate-200">{l.games}</b>
+              </span>
+              <span>
+                W <b className="tabular-nums text-slate-700 dark:text-slate-200">{l.wins}</b>
+              </span>
+            </div>
+          </Card>
+        ))}
       </div>
     </section>
   )

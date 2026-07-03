@@ -1,9 +1,11 @@
 import { Link, useParams } from 'react-router-dom'
 import { getLeaderResults, getLeaderStats } from '../lib/api'
-import { ErrorBox, Loading, useAsync } from '../components/ui'
+import { Badge, Card, ErrorBox, Loading, StatCards, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
 import { RankMedal } from '../components/icons'
 import { avg, formatDate, pct } from '../lib/format'
+
+const linkCls = 'text-cyan-700 hover:underline dark:text-cyan-400'
 
 export default function LeaderDetail() {
   const { id = '' } = useParams()
@@ -34,19 +36,12 @@ export default function LeaderDetail() {
   return (
     <section className="space-y-5">
       <div>
-        <Link to="/leaders" className="text-sm text-amber-700 hover:underline">
+        <Link to="/leaders" className={`text-sm ${linkCls}`}>
           &larr; Leaders
         </Link>
-        <h1 className="mt-1 text-xl font-bold">
-          <LeaderName
-            id={id}
-            name={stat.leader_name}
-            imageUrl={stat.image_url}
-            className="hover:underline"
-          />
-          {stat.expansion && (
-            <span className="ml-2 text-sm font-normal text-gray-400 dark:text-gray-500">{stat.expansion}</span>
-          )}
+        <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold tracking-tight">
+          <LeaderName id={id} name={stat.leader_name} imageUrl={stat.image_url} className="hover:underline" />
+          {stat.expansion && <Badge>{stat.expansion}</Badge>}
         </h1>
       </div>
 
@@ -62,29 +57,44 @@ export default function LeaderDetail() {
       {players.length > 0 && (
         <div>
           <h2 className="mb-2 font-semibold">Played by</h2>
-          <div className="overflow-hidden rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
+          {/* Desktop table */}
+          <Card className="hidden overflow-hidden sm:block">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 text-left text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+              <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
                 <tr>
-                  <th className="p-2">Player</th>
-                  <th className="p-2 text-right">Games</th>
-                  <th className="p-2 text-right">Wins</th>
+                  <th className="p-3 font-medium">Player</th>
+                  <th className="p-3 text-right font-medium">Games</th>
+                  <th className="p-3 text-right font-medium">Wins</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {players.map((p) => (
-                  <tr key={p.id} className="border-t dark:border-gray-700">
-                    <td className="p-2">
-                      <Link className="text-amber-700 hover:underline" to={`/players/${p.id}`}>
+                  <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td className="p-3">
+                      <Link className={linkCls} to={`/players/${p.id}`}>
                         {p.name}
                       </Link>
                     </td>
-                    <td className="p-2 text-right tabular-nums">{p.games}</td>
-                    <td className="p-2 text-right tabular-nums">{p.wins}</td>
+                    <td className="p-3 text-right tabular-nums">{p.games}</td>
+                    <td className="p-3 text-right tabular-nums">{p.wins}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </Card>
+          {/* Mobile cards */}
+          <div className="space-y-2 sm:hidden">
+            {players.map((p) => (
+              <Card key={p.id} className="flex items-center justify-between p-3">
+                <Link className={linkCls} to={`/players/${p.id}`}>
+                  {p.name}
+                </Link>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  <b className="tabular-nums text-slate-700 dark:text-slate-200">{p.games}</b> games,{' '}
+                  <b className="tabular-nums text-slate-700 dark:text-slate-200">{p.wins}</b> wins
+                </span>
+              </Card>
+            ))}
           </div>
         </div>
       )}
@@ -92,36 +102,25 @@ export default function LeaderDetail() {
       <div>
         <h2 className="mb-2 font-semibold">Game history</h2>
         {results.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">Never played yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Never played yet.</p>
         ) : (
-          <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
-            {results.map((r) => (
-              <li key={r.id} className="flex items-center justify-between p-2">
-                <span className="flex items-center gap-1.5">
-                  <RankMedal place={r.placement} />
-                  <Link className="text-amber-700 hover:underline" to={`/players/${r.player_id}`}>
-                    {r.player_name}
-                  </Link>
-                </span>
-                <span className="text-gray-400 dark:text-gray-500">{formatDate(r.played_on)}</span>
-              </li>
-            ))}
-          </ul>
+          <Card className="overflow-hidden">
+            <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-800">
+              {results.map((r) => (
+                <li key={r.id} className="flex items-center justify-between p-3">
+                  <span className="flex items-center gap-1.5">
+                    <RankMedal place={r.placement} />
+                    <Link className={linkCls} to={`/players/${r.player_id}`}>
+                      {r.player_name}
+                    </Link>
+                  </span>
+                  <span className="text-slate-400 dark:text-slate-500">{formatDate(r.played_on)}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
         )}
       </div>
     </section>
-  )
-}
-
-export function StatCards({ items }: { items: [string, string][] }) {
-  return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {items.map(([label, value]) => (
-        <div key={label} className="rounded border bg-white p-3 text-center dark:border-gray-700 dark:bg-gray-800">
-          <div className="text-lg font-bold tabular-nums">{value}</div>
-          <div className="text-xs uppercase text-gray-500 dark:text-gray-400">{label}</div>
-        </div>
-      ))}
-    </div>
   )
 }

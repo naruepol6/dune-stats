@@ -9,12 +9,15 @@ import {
   setLeaderHidden,
   setPlayerHidden,
 } from '../lib/api'
-import { ErrorBox, Loading, useAsync } from '../components/ui'
+import { Badge, Button, Card, ErrorBox, Loading, useAsync } from '../components/ui'
+
+const inputCls =
+  'rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100'
 
 export default function Roster() {
   return (
     <section className="space-y-8">
-      <h1 className="text-xl font-bold">Roster</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Roster</h1>
       <PlayerRoster />
       <LeaderRoster />
     </section>
@@ -54,44 +57,45 @@ function PlayerRoster() {
         }}
       >
         <input
-          className="flex-1 rounded border px-2 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+          className={`flex-1 ${inputCls}`}
           placeholder="New player name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button
-          disabled={busy || !name.trim()}
-          className="rounded bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={busy || !name.trim()}>
           Add
-        </button>
+        </Button>
       </form>
-      <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
-        {players.map((p) => (
-          <li key={p.id} className="flex items-center justify-between p-2">
-            <span className={p.hidden ? 'text-gray-400 line-through' : ''}>{p.name}</span>
-            <span className="flex gap-3 text-xs">
-              <button
-                className="text-amber-700 hover:underline"
-                onClick={() => {
-                  const next = prompt('Rename player', p.name)
-                  if (next && next.trim() && next !== p.name) act(() => renamePlayer(p.id, next))
-                }}
-              >
-                Rename
-              </button>
-              <button
-                className="text-gray-600 hover:underline dark:text-gray-400"
-                onClick={() => act(() => setPlayerHidden(p.id, !p.hidden))}
-              >
-                {p.hidden ? 'Unhide' : 'Hide'}
-              </button>
-            </span>
-          </li>
-        ))}
-        {players.length === 0 && <li className="p-3 text-gray-500 dark:text-gray-400">No players yet.</li>}
-      </ul>
-      <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+      <Card className="overflow-hidden">
+        <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-800">
+          {players.map((p) => (
+            <li key={p.id} className="flex items-center justify-between p-3">
+              <span className={p.hidden ? 'text-slate-400 line-through' : ''}>{p.name}</span>
+              <span className="flex gap-3 text-xs">
+                <button
+                  className="text-cyan-700 hover:underline dark:text-cyan-400"
+                  onClick={() => {
+                    const next = prompt('Rename player', p.name)
+                    if (next && next.trim() && next !== p.name) act(() => renamePlayer(p.id, next))
+                  }}
+                >
+                  Rename
+                </button>
+                <button
+                  className="text-slate-500 hover:underline dark:text-slate-400"
+                  onClick={() => act(() => setPlayerHidden(p.id, !p.hidden))}
+                >
+                  {p.hidden ? 'Unhide' : 'Hide'}
+                </button>
+              </span>
+            </li>
+          ))}
+          {players.length === 0 && (
+            <li className="p-3 text-slate-500 dark:text-slate-400">No players yet.</li>
+          )}
+        </ul>
+      </Card>
+      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
         Hidden players stay out of the dropdowns but keep their stats and game history.
       </p>
     </div>
@@ -135,53 +139,54 @@ function LeaderRoster() {
         }}
       >
         <input
-          className="min-w-40 flex-1 rounded border px-2 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+          className={`min-w-40 flex-1 ${inputCls}`}
           placeholder="New leader name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <input
-          className="w-36 rounded border px-2 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+          className={`w-36 ${inputCls}`}
           placeholder="Expansion"
           value={expansion}
           onChange={(e) => setExpansion(e.target.value)}
         />
-        <button
-          disabled={busy || !name.trim()}
-          className="rounded bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={busy || !name.trim()}>
           Add
-        </button>
+        </Button>
       </form>
-      <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
-        {leaders.map((l) => (
-          <li key={l.id} className="flex items-center justify-between p-2">
-            <span className={l.hidden ? 'text-gray-400 line-through' : ''}>
-              {l.name}
-              {l.expansion && <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">{l.expansion}</span>}
-            </span>
-            <span className="flex gap-3 text-xs">
-              <button
-                className="text-amber-700 hover:underline"
-                onClick={() => {
-                  const next = prompt('Rename leader', l.name)
-                  if (next && next.trim() && next !== l.name) act(() => renameLeader(l.id, next))
-                }}
-              >
-                Rename
-              </button>
-              <button
-                className="text-gray-600 hover:underline dark:text-gray-400"
-                onClick={() => act(() => setLeaderHidden(l.id, !l.hidden))}
-              >
-                {l.hidden ? 'Unhide' : 'Hide'}
-              </button>
-            </span>
-          </li>
-        ))}
-        {leaders.length === 0 && <li className="p-3 text-gray-500 dark:text-gray-400">No leaders yet.</li>}
-      </ul>
-      <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+      <Card className="overflow-hidden">
+        <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-800">
+          {leaders.map((l) => (
+            <li key={l.id} className="flex items-center justify-between p-3">
+              <span className={l.hidden ? 'text-slate-400 line-through' : ''}>
+                {l.name}
+                {l.expansion && <Badge className="ml-2">{l.expansion}</Badge>}
+              </span>
+              <span className="flex gap-3 text-xs">
+                <button
+                  className="text-cyan-700 hover:underline dark:text-cyan-400"
+                  onClick={() => {
+                    const next = prompt('Rename leader', l.name)
+                    if (next && next.trim() && next !== l.name) act(() => renameLeader(l.id, next))
+                  }}
+                >
+                  Rename
+                </button>
+                <button
+                  className="text-slate-500 hover:underline dark:text-slate-400"
+                  onClick={() => act(() => setLeaderHidden(l.id, !l.hidden))}
+                >
+                  {l.hidden ? 'Unhide' : 'Hide'}
+                </button>
+              </span>
+            </li>
+          ))}
+          {leaders.length === 0 && (
+            <li className="p-3 text-slate-500 dark:text-slate-400">No leaders yet.</li>
+          )}
+        </ul>
+      </Card>
+      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
         Hidden leaders stay out of the dropdowns but keep their stats.
       </p>
     </div>

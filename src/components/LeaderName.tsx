@@ -54,7 +54,10 @@ export function LeaderName({ id, name, imageUrl, className }: LeaderNameProps) {
       onFocus={open}
       onBlur={close}
     >
-      <Link className={className ?? 'text-amber-700 hover:underline'} to={`/leaders/${id}`}>
+      <Link
+        className={className ?? 'text-cyan-700 hover:underline dark:text-cyan-400'}
+        to={`/leaders/${id}`}
+      >
         {name}
       </Link>
       {canPreview && pos &&
@@ -70,7 +73,7 @@ export function LeaderName({ id, name, imageUrl, className }: LeaderNameProps) {
               height: 'auto',
               transform: pos.placement === 'above' ? 'translateY(-100%)' : undefined,
             }}
-            className="pointer-events-none z-50 h-auto rounded-lg border border-gray-200 object-contain shadow-xl dark:border-gray-700"
+            className="pointer-events-none z-50 h-auto rounded-lg border border-slate-200 object-contain shadow-xl dark:border-slate-700"
             onError={() => setFailed(true)}
           />,
           document.body,

@@ -111,7 +111,7 @@ export default function SearchSelect({
         role="combobox"
         aria-expanded={open}
         autoComplete="off"
-        className={`w-full rounded border px-2 py-1.5 text-sm focus:border-amber-600 focus:outline-none focus:ring-1 focus:ring-amber-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 ${
+        className={`w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 ${
           invalid ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-950' : ''
         }`}
         placeholder={placeholder}
@@ -130,10 +130,10 @@ export default function SearchSelect({
       {open && (
         <ul
           ref={listRef}
-          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded border bg-white py-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+          className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-slate-200 bg-white py-1 text-sm shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         >
           {matches.length === 0 ? (
-            <li className="px-2 py-1.5 text-gray-400 dark:text-gray-500">No matches</li>
+            <li className="px-2 py-1.5 text-slate-400 dark:text-slate-500">No matches</li>
           ) : (
             matches.map((o, i) => (
               <li
@@ -146,8 +146,8 @@ export default function SearchSelect({
                 }}
                 onMouseEnter={() => setHighlight(i)}
                 className={`cursor-pointer px-2 py-1.5 ${
-                  i === highlight ? 'bg-amber-100 dark:bg-gray-700' : ''
-                } ${o.id === value ? 'font-medium text-amber-700' : ''}`}
+                  i === highlight ? 'bg-cyan-50 dark:bg-slate-800' : ''
+                } ${o.id === value ? 'font-medium text-cyan-700 dark:text-cyan-400' : ''}`}
               >
                 {o.label}
               </li>

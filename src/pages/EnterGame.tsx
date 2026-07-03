@@ -2,9 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createGame, getGame, getLeaders, getPlayers, softDeleteGame, updateGame } from '../lib/api'
 import type { Leader, Player, ResultInput } from '../lib/types'
-import { ErrorBox, Loading } from '../components/ui'
+import { Button, Card, ErrorBox, Loading } from '../components/ui'
 import SearchSelect from '../components/SearchSelect'
 import { RankMedal } from '../components/icons'
+
+const inputCls =
+  'rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-slate-900 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100'
 
 interface Row {
   player_id: string
@@ -130,7 +133,7 @@ export default function EnterGame() {
 
   return (
     <section>
-      <h1 className="mb-3 text-xl font-bold">{editing ? 'Edit game' : 'Add game'}</h1>
+      <h1 className="mb-4 text-2xl font-bold tracking-tight">{editing ? 'Edit game' : 'Add game'}</h1>
 
       {noPlayers && (
         <p className="mb-3 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
@@ -145,20 +148,20 @@ export default function EnterGame() {
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="flex flex-wrap gap-4">
           <label className="text-sm">
-            <span className="mb-1 block text-gray-600 dark:text-gray-400">Date played</span>
+            <span className="mb-1 block text-slate-500 dark:text-slate-400">Date played</span>
             <input
               type="date"
-              className="rounded border px-2 py-1.5 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              className={inputCls}
               value={playedOn}
               max={today()}
               onChange={(e) => setPlayedOn(e.target.value)}
             />
           </label>
           <label className="flex-1 text-sm">
-            <span className="mb-1 block text-gray-600 dark:text-gray-400">Note (optional)</span>
+            <span className="mb-1 block text-slate-500 dark:text-slate-400">Note (optional)</span>
             <input
               type="text"
-              className="w-full rounded border px-2 py-1.5 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              className={`w-full ${inputCls}`}
               placeholder="e.g. tense final conflict"
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -168,7 +171,7 @@ export default function EnterGame() {
 
         <div className="space-y-2">
           {rows.map((row, i) => (
-            <div key={i} className="flex items-center gap-2 rounded border bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
+            <Card key={i} className="flex items-center gap-2 p-2">
               <span className="flex w-9 shrink-0 justify-center">
                 <RankMedal place={i + 1} className="h-5 w-5" />
               </span>
@@ -186,41 +189,28 @@ export default function EnterGame() {
                 placeholder="- leader -"
                 invalid={dupLeaders.has(row.leader_id)}
               />
-            </div>
+            </Card>
           ))}
         </div>
 
         {(dupPlayers.size > 0 || dupLeaders.size > 0) && (
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-red-600 dark:text-red-400">
             Each player and each leader can appear only once per game.
           </p>
         )}
         {saveError && <ErrorBox message={saveError} />}
 
         <div className="flex gap-2">
-          <button
-            type="submit"
-            disabled={!valid || saving}
-            className="rounded bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <Button type="submit" disabled={!valid || saving}>
             {saving ? 'Saving...' : editing ? 'Save changes' : 'Save game'}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="rounded border px-4 py-2 text-sm hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
-          >
+          </Button>
+          <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
             Cancel
-          </button>
+          </Button>
           {editing && (
-            <button
-              type="button"
-              onClick={onDelete}
-              disabled={deleting}
-              className="ml-auto rounded border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:hover:bg-red-950"
-            >
+            <Button type="button" variant="danger" className="ml-auto" onClick={onDelete} disabled={deleting}>
               {deleting ? 'Deleting...' : 'Delete game'}
-            </button>
+            </Button>
           )}
         </div>
       </form>
