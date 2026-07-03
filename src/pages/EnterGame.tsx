@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createGame, getGame, getLeaders, getPlayers, updateGame } from '../lib/api'
+import { createGame, getGame, getLeaders, getPlayers, softDeleteGame, updateGame } from '../lib/api'
 import type { Leader, Player, ResultInput } from '../lib/types'
 import { ErrorBox, Loading } from '../components/ui'
 import SearchSelect from '../components/SearchSelect'
@@ -36,6 +36,7 @@ export default function EnterGame() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -105,6 +106,20 @@ export default function EnterGame() {
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : String(err))
       setSaving(false)
+    }
+  }
+
+  async function onDelete() {
+    if (!id) return
+    if (!confirm('Delete this game? It can be restored from the database if needed.')) return
+    setDeleting(true)
+    setSaveError(null)
+    try {
+      await softDeleteGame(id)
+      navigate('/games')
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : String(err))
+      setDeleting(false)
     }
   }
 
@@ -197,6 +212,16 @@ export default function EnterGame() {
           >
             Cancel
           </button>
+          {editing && (
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={deleting}
+              className="ml-auto rounded border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:hover:bg-red-950"
+            >
+              {deleting ? 'Deleting...' : 'Delete game'}
+            </button>
+          )}
         </div>
       </form>
     </section>

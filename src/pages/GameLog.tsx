@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getGames, softDeleteGame } from '../lib/api'
+import { getGames } from '../lib/api'
 import type { GameWithResults } from '../lib/types'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
@@ -8,26 +7,12 @@ import { RankMedal } from '../components/icons'
 import { formatDate } from '../lib/format'
 
 export default function GameLog() {
-  const { data, loading, error, reload } = useAsync(getGames, [])
+  const { data, loading, error } = useAsync(getGames, [])
   const navigate = useNavigate()
-  const [busy, setBusy] = useState<string | null>(null)
 
   if (loading) return <Loading />
   if (error) return <ErrorBox message={error} />
   const games = data ?? []
-
-  async function onDelete(id: string) {
-    if (!confirm('Delete this game? It can be restored from the database if needed.')) return
-    setBusy(id)
-    try {
-      await softDeleteGame(id)
-      reload()
-    } catch (e) {
-      alert(e instanceof Error ? e.message : String(e))
-    } finally {
-      setBusy(null)
-    }
-  }
 
   return (
     <section>
@@ -79,15 +64,6 @@ export default function GameLog() {
                   ))}
               </ol>
               {g.note && <p className="border-t px-3 py-1.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">{g.note}</p>}
-              <div className="flex justify-end border-t px-3 py-1.5 dark:border-gray-700">
-                <button
-                  className="text-xs text-red-600 hover:underline disabled:opacity-50"
-                  disabled={busy === g.id}
-                  onClick={() => onDelete(g.id)}
-                >
-                  Delete game
-                </button>
-              </div>
             </li>
           ))}
         </ul>
