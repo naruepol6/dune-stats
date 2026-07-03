@@ -154,7 +154,10 @@ export default function EnterGame() {
         <div className="space-y-2">
           {rows.map((row, i) => (
             <div key={i} className="flex items-center gap-2 rounded border bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
-              <span className="w-8 shrink-0 text-center text-lg" title={`${i + 1} place`}>
+              <span
+                className="w-9 shrink-0 text-center text-sm font-semibold text-gray-500 dark:text-gray-400"
+                title={`${i + 1} place`}
+              >
                 {placementLabel(i + 1)}
               </span>
               <SearchSelect

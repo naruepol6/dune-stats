@@ -8,10 +8,10 @@ export function avg(n: number | null | undefined): string {
   return n.toFixed(2)
 }
 
-const MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉', 4: '4️⃣' }
+const ORDINALS: Record<number, string> = { 1: '1st', 2: '2nd', 3: '3rd', 4: '4th' }
 
 export function placementLabel(p: number): string {
-  return MEDALS[p] ?? String(p)
+  return ORDINALS[p] ?? `${p}th`
 }
 
 export function formatDate(iso: string): string {

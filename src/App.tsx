@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
 import { useTheme } from './lib/theme'
+import { MoonIcon, SunIcon } from './components/icons'
 import Leaderboard from './pages/Leaderboard'
 import GameLog from './pages/GameLog'
 import EnterGame from './pages/EnterGame'
@@ -39,9 +40,9 @@ function Nav() {
         onClick={toggle}
         aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        className="rounded px-3 py-2 text-sm text-gray-700 hover:bg-amber-100 dark:text-gray-300 dark:hover:bg-gray-700"
+        className="inline-flex items-center rounded px-3 py-2 text-gray-700 hover:bg-amber-100 dark:text-gray-300 dark:hover:bg-gray-700"
       >
-        {theme === 'dark' ? '☀️' : '🌙'}
+        {theme === 'dark' ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
       </button>
     </nav>
   )
