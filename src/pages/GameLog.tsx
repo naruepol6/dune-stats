@@ -4,7 +4,8 @@ import { getGames, softDeleteGame } from '../lib/api'
 import type { GameWithResults } from '../lib/types'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
-import { formatDate, placementLabel } from '../lib/format'
+import { RankMedal } from '../components/icons'
+import { formatDate } from '../lib/format'
 
 export default function GameLog() {
   const { data, loading, error, reload } = useAsync(getGames, [])
@@ -71,8 +72,8 @@ export default function GameLog() {
                   .sort((a, b) => a.placement - b.placement)
                   .map((r) => (
                     <li key={r.id} className="flex items-center justify-between px-3 py-1.5">
-                      <span>
-                        {placementLabel(r.placement)}{' '}
+                      <span className="flex items-center gap-1.5">
+                        <RankMedal place={r.placement} />
                         <Link className="font-medium text-amber-700 hover:underline" to={`/players/${r.player_id}`}>
                           {r.player_name}
                         </Link>

@@ -2,7 +2,8 @@ import { Link, useParams } from 'react-router-dom'
 import { getLeaderResults, getLeaderStats } from '../lib/api'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
-import { avg, formatDate, pct, placementLabel } from '../lib/format'
+import { RankMedal } from '../components/icons'
+import { avg, formatDate, pct } from '../lib/format'
 
 export default function LeaderDetail() {
   const { id = '' } = useParams()
@@ -96,8 +97,8 @@ export default function LeaderDetail() {
           <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
             {results.map((r) => (
               <li key={r.id} className="flex items-center justify-between p-2">
-                <span>
-                  {placementLabel(r.placement)}{' '}
+                <span className="flex items-center gap-1.5">
+                  <RankMedal place={r.placement} />
                   <Link className="text-amber-700 hover:underline" to={`/players/${r.player_id}`}>
                     {r.player_name}
                   </Link>

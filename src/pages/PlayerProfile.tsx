@@ -2,7 +2,8 @@ import { Link, useParams } from 'react-router-dom'
 import { getPlayerResults, getPlayerStats } from '../lib/api'
 import { ErrorBox, Loading, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
-import { avg, formatDate, pct, placementLabel } from '../lib/format'
+import { RankMedal } from '../components/icons'
+import { avg, formatDate, pct } from '../lib/format'
 import { StatCards } from './LeaderDetail'
 
 export default function PlayerProfile() {
@@ -94,8 +95,8 @@ export default function PlayerProfile() {
           <ul className="divide-y rounded border bg-white text-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
             {results.map((r) => (
               <li key={r.id} className="flex items-center justify-between p-2">
-                <span>
-                  {placementLabel(r.placement)} as{' '}
+                <span className="flex items-center gap-1.5">
+                  <RankMedal place={r.placement} /> as{' '}
                   <LeaderName id={r.leader_id} name={r.leader_name} imageUrl={r.image_url} />
                 </span>
                 <span className="text-gray-400 dark:text-gray-500">{formatDate(r.played_on)}</span>

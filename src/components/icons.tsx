@@ -1,5 +1,54 @@
+import { placementLabel } from '../lib/format'
+
 interface IconProps {
   className?: string
+}
+
+const RANK_COLOR: Record<number, string> = {
+  1: '#d4a017', // gold
+  2: '#9ca3af', // silver
+  3: '#b8763e', // bronze
+  4: '#6b7280', // slate
+}
+
+/**
+ * A medal icon for a finishing place, tinted per rank, with the rank number
+ * inside so it stays unambiguous regardless of color (accessibility). Exposes
+ * the ordinal ("1st place") as an accessible label.
+ */
+export function RankMedal({ place, className }: { place: number; className?: string }) {
+  const color = RANK_COLOR[place] ?? '#6b7280'
+  const label = `${placementLabel(place)} place`
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className ?? 'inline-block h-5 w-5 shrink-0'}
+      style={{ color }}
+      role="img"
+      aria-label={label}
+    >
+      <title>{label}</title>
+      <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      <circle cx="12" cy="8" r="6" />
+      <text
+        x="12"
+        y="8"
+        fontSize="7"
+        fontWeight="700"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="currentColor"
+        stroke="none"
+      >
+        {place}
+      </text>
+    </svg>
+  )
 }
 
 /** Minimal line icons (Feather-style), inherit color via currentColor. */
