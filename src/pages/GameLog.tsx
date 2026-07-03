@@ -51,21 +51,12 @@ export default function GameLog() {
             <li key={g.id} className="rounded border bg-white dark:border-gray-700 dark:bg-gray-800">
               <div className="flex items-center justify-between border-b px-3 py-2 dark:border-gray-700">
                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{formatDate(g.played_on)}</span>
-                <span className="flex gap-2 text-sm">
-                  <button
-                    className="text-amber-700 hover:underline"
-                    onClick={() => navigate(`/games/${g.id}/edit`)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-red-600 hover:underline disabled:opacity-50"
-                    disabled={busy === g.id}
-                    onClick={() => onDelete(g.id)}
-                  >
-                    Delete
-                  </button>
-                </span>
+                <button
+                  className="text-sm text-amber-700 hover:underline"
+                  onClick={() => navigate(`/games/${g.id}/edit`)}
+                >
+                  Edit
+                </button>
               </div>
               <ol className="divide-y text-sm dark:divide-gray-700">
                 {[...g.results]
@@ -88,6 +79,15 @@ export default function GameLog() {
                   ))}
               </ol>
               {g.note && <p className="border-t px-3 py-1.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">{g.note}</p>}
+              <div className="flex justify-end border-t px-3 py-1.5 dark:border-gray-700">
+                <button
+                  className="text-xs text-red-600 hover:underline disabled:opacity-50"
+                  disabled={busy === g.id}
+                  onClick={() => onDelete(g.id)}
+                >
+                  Delete game
+                </button>
+              </div>
             </li>
           ))}
         </ul>
