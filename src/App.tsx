@@ -12,20 +12,20 @@ import Roster from './pages/Roster'
 function Nav() {
   const { theme, toggle } = useTheme()
   const link = ({ isActive }: { isActive: boolean }) =>
-    `rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+    `shrink-0 rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors ${
       isActive
         ? 'bg-cyan-600 text-white'
         : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
     }`
   return (
     <nav className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-1 px-3 py-2">
+      <div className="mx-auto flex max-w-3xl items-center gap-0.5 overflow-x-auto px-2 py-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <Link
           to="/"
-          className="mr-2 flex items-center gap-2 font-semibold tracking-tight text-slate-900 dark:text-slate-100"
+          className="mr-1 flex shrink-0 items-center gap-1.5 font-semibold tracking-tight text-slate-900 dark:text-slate-100"
         >
           <img src="/favicon.svg" alt="" className="h-5 w-5" />
-          <span>Ice Dune</span>
+          <span className="hidden sm:inline">Ice Dune</span>
         </Link>
         <NavLink to="/" end className={link}>
           Leaderboard
@@ -39,10 +39,10 @@ function Nav() {
         <NavLink to="/roster" className={link}>
           Roster
         </NavLink>
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-0.5 pl-1">
           <NavLink
             to="/enter"
-            className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-cyan-700"
+            className="shrink-0 rounded-lg bg-cyan-600 px-2.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-cyan-700"
           >
             + Add
           </NavLink>
@@ -51,7 +51,7 @@ function Nav() {
             onClick={toggle}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="inline-flex items-center rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="inline-flex shrink-0 items-center rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             {theme === 'dark' ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
           </button>
