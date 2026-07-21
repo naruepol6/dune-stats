@@ -9,12 +9,14 @@ import PlayerProfile from './pages/PlayerProfile'
 import LeaderList from './pages/LeaderList'
 import LeaderDetail from './pages/LeaderDetail'
 import Roster from './pages/Roster'
+import RulesQA from './pages/RulesQA'
 
 const NAV_LINKS = [
   { to: '/', label: 'Leaderboard', end: true },
   { to: '/leaders', label: 'Leaders', end: false },
   { to: '/games', label: 'Games', end: false },
   { to: '/roster', label: 'Roster', end: false },
+  { to: '/rules', label: 'Rules AI', end: false },
 ]
 
 function Nav() {
@@ -137,6 +139,7 @@ export default function App() {
           <Route path="/leaders" element={<LeaderList />} />
           <Route path="/leaders/:id" element={<LeaderDetail />} />
           <Route path="/roster" element={<Roster />} />
+          <Route path="/rules" element={<RulesQA />} />
           <Route path="*" element={<p className="p-4">Not found.</p>} />
         </Routes>
       </main>

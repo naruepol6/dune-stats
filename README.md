@@ -39,7 +39,36 @@ Deletes are soft (recoverable) and all game changes are recorded in an audit log
    - `VITE_SUPABASE_ANON_KEY`
 4. Deploy. Every `git push` afterwards redeploys automatically.
 
-`vercel.json` rewrites all routes to `index.html` so client-side routing works on refresh.
+`vercel.json` rewrites all non-`/api` routes to `index.html` so client-side routing works on
+refresh, while letting the serverless function under `/api` handle its own requests.
+
+## Rules AI (Q&A over the FAQ)
+
+The `/rules` page lets anyone ask rules questions about the game.
+It calls a Vercel serverless function (`api/rules-qa.ts`, Node.js runtime) that asks Google
+Gemini, grounding answers in the official Comprehensive Rules FAQ (`Dune_Faq.pdf`) and citing the
+relevant section in-line. The Gemini API key stays server-side; the browser only talks to
+`/api/rules-qa`.
+
+The FAQ PDF is bundled with the function (`functions.includeFiles` in `vercel.json`) and sent
+inline on each request, with the document placed first so Gemini 2.5 implicit caching can reuse it
+across questions. This avoids the Gemini Files API, whose uploads auto-expire after 48 hours, and
+means there is no separate upload step to run.
+
+Setup:
+
+1. Add this environment variable (in `.env.local` for local dev, and in Vercel):
+   - `GEMINI_API_KEY` - a Gemini API key from https://aistudio.google.com/apikey
+2. (Optional but recommended, since the endpoint is open) enable per-IP rate limiting:
+   run `supabase/migrations/0002_rules_qa_rate_limit.sql` in the Supabase SQL editor, then set
+   the server-only vars `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_URL`. Without them the endpoint
+   simply skips rate limiting.
+
+The default model is `gemini-2.5-flash` (cheap, fast); switch `MODEL` in `api/rules-qa.ts` to
+`gemini-2.5-pro` for higher-quality answers on tricky rulings.
+
+Local dev note: the Vite dev server does not run the `/api` function. Use `vercel dev` (or deploy
+a preview) to exercise the Rules AI endpoint end-to-end.
 
 ## Notes
 
