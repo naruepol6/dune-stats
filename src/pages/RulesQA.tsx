@@ -6,11 +6,8 @@ type ChatMessage = {
   content: string
 }
 
-const SUGGESTIONS = [
-  'Can you retreat units during the Combat phase?',
-  'How does the Spice Must Flow victory condition work?',
-  'When exactly do you gain the bonus from a revealed intrigue card?',
-]
+const FAQ_URL =
+  'https://docs.google.com/document/d/15FrreNVs2eAnEWlNCmChQuBr5LLg0HHgC7BqWGk7KYw/edit?usp=drivesdk'
 
 export default function RulesQA() {
   const [thread, setThread] = useState<ChatMessage[]>([])
@@ -90,27 +87,15 @@ export default function RulesQA() {
           Ask about Dune: Imperium - Uprising rules. Answers draw on the official
           Comprehensive Rules FAQ and cite the relevant section where it applies.
         </p>
+        <a
+          href={FAQ_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-block text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-400"
+        >
+          View the full FAQ document →
+        </a>
       </header>
-
-      {thread.length === 0 && (
-        <div className="space-y-2">
-          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Try asking
-          </p>
-          <div className="flex flex-col gap-2">
-            {SUGGESTIONS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => void ask(s)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:border-cyan-400 hover:bg-cyan-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-cyan-700 dark:hover:bg-slate-800"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {thread.length > 0 && (
         <div className="space-y-3">
