@@ -80,9 +80,13 @@ async function checkRateLimit(ip: string): Promise<boolean> {
   }
 }
 
-export default async function handler(req: Request): Promise<Response> {
-  console.log('[rules-qa] handler invoked (build: non-streaming v2)')
-  if (req.method !== 'POST') return json(405, { error: 'Method not allowed' })
+// Exported as a named HTTP-method function (not `export default`) so Vercel's
+// Node runtime uses the Web fetch-style signature and honors the returned
+// `Response`. With `export default function(req)` it assumes the classic
+// `(req, res) => void` signature, ignores the return value, and the request
+// hangs until the function times out.
+export async function POST(req: Request): Promise<Response> {
+  console.log('[rules-qa] handler invoked (build: named-POST v3)')
 
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
