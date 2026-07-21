@@ -70,6 +70,8 @@ async function checkRateLimit(ip: string): Promise<boolean> {
         p_max: RATE_LIMIT_MAX,
         p_window_seconds: RATE_LIMIT_WINDOW_SECONDS,
       }),
+      // Never let the limiter hang the whole function (fetch has no default timeout).
+      signal: AbortSignal.timeout(5000),
     })
     if (!res.ok) return true // don't block users if the limiter itself errors
     return (await res.json()) === true
@@ -79,6 +81,7 @@ async function checkRateLimit(ip: string): Promise<boolean> {
 }
 
 export default async function handler(req: Request): Promise<Response> {
+  console.log('[rules-qa] handler invoked (build: non-streaming v2)')
   if (req.method !== 'POST') return json(405, { error: 'Method not allowed' })
 
   const apiKey = process.env.GEMINI_API_KEY
@@ -116,6 +119,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (!(await checkRateLimit(ip))) {
     return json(429, { error: 'Rate limit reached. Try again later.' })
   }
+  console.log('[rules-qa] passed validation + rate limit, building request')
 
   const ai = new GoogleGenAI({ apiKey })
 
