@@ -44,8 +44,6 @@ const FAQ_BASE64 = readFileSync(join(process.cwd(), 'Dune_Faq.pdf')).toString('b
 
 type Turn = { role: 'user' | 'assistant'; content: string }
 
-type OutMessage = { t: 'text'; v: string } | { t: 'error'; v: string }
-
 function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -139,48 +137,44 @@ export default async function handler(req: Request): Promise<Response> {
     return { role, parts: [{ text: t.content }] }
   })
 
-  const encoder = new TextEncoder()
-  const send = (
-    controller: ReadableStreamDefaultController<Uint8Array>,
-    msg: OutMessage,
-  ) => controller.enqueue(encoder.encode(JSON.stringify(msg) + '\n'))
+  // Non-streaming: return the whole answer in one response. Returning a
+  // streaming ReadableStream from a Vercel Node function proved unreliable
+  // (the response never completed, hitting the 60s function timeout). This
+  // call finishes in well under 10s. The timing logs and the timeout guard
+  // below make any future stall show up as a clean error in the runtime logs
+  // instead of a silent 60s kill.
+  const t0 = Date.now()
+  console.log(`[rules-qa] calling Gemini (${MODEL}), question chars=${question.length}`)
 
-  const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      try {
-        const geminiStream = await ai.models.generateContentStream({
-          model: MODEL,
-          contents,
-          config: {
-            systemInstruction: SYSTEM_PROMPT,
-            maxOutputTokens: 2048,
-            // The answer is grounded in the FAQ that's in-context, so heavy
-            // reasoning isn't needed - disabling "thinking" roughly triples
-            // response speed (~27s -> ~9s) and avoids a long wait before the
-            // first token. Raise to e.g. 512 for tougher rulings.
-            thinkingConfig: { thinkingBudget: 0 },
-          },
-        })
+  try {
+    const result = await Promise.race([
+      ai.models.generateContent({
+        model: MODEL,
+        contents,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          maxOutputTokens: 2048,
+          // The answer is grounded in the FAQ that's in-context, so heavy
+          // reasoning isn't needed - disabling "thinking" keeps the call fast.
+          // Raise to e.g. 512 for tougher rulings.
+          thinkingConfig: { thinkingBudget: 0 },
+        },
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini call timed out after 45s')), 45_000),
+      ),
+    ])
 
-        for await (const chunk of geminiStream) {
-          const text = chunk.text
-          if (text) send(controller, { t: 'text', v: text })
-        }
-      } catch (err) {
-        send(controller, {
-          t: 'error',
-          v: err instanceof Error ? err.message : 'Something went wrong.',
-        })
-      } finally {
-        controller.close()
-      }
-    },
-  })
-
-  return new Response(stream, {
-    headers: {
-      'content-type': 'application/x-ndjson; charset=utf-8',
-      'cache-control': 'no-store',
-    },
-  })
+    const answer = result.text ?? ''
+    console.log(`[rules-qa] Gemini responded in ${Date.now() - t0}ms, answer chars=${answer.length}`)
+    if (!answer) {
+      return json(502, { error: 'The model returned an empty answer. Try rephrasing.' })
+    }
+    return json(200, { answer })
+  } catch (err) {
+    console.error(`[rules-qa] Gemini call failed after ${Date.now() - t0}ms:`, err)
+    return json(502, {
+      error: err instanceof Error ? err.message : 'Something went wrong.',
+    })
+  }
 }

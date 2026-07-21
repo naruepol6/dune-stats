@@ -6,8 +6,6 @@ type ChatMessage = {
   content: string
 }
 
-type StreamMsg = { t: 'text'; v: string } | { t: 'error'; v: string }
-
 const SUGGESTIONS = [
   'Can you retreat units during the Combat phase?',
   'How does the Spice Must Flow victory condition work?',
@@ -48,42 +46,19 @@ export default function RulesQA() {
         body: JSON.stringify({ question: trimmed, history }),
       })
 
-      if (!res.ok || !res.body) {
-        let message = `Request failed (${res.status}).`
-        try {
-          const data = await res.json()
-          if (data?.error) message = data.error
-        } catch {
-          /* keep default message */
-        }
-        throw new Error(message)
+      const data = (await res.json().catch(() => null)) as
+        | { answer?: string; error?: string }
+        | null
+
+      if (!res.ok || !data) {
+        throw new Error(data?.error || `Request failed (${res.status}).`)
       }
+      if (data.error) throw new Error(data.error)
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-
-      const appendText = (v: string) =>
-        setThread((t) =>
-          t.map((m, i) => (i === t.length - 1 ? { ...m, content: m.content + v } : m)),
-        )
-
-      const handle = (msg: StreamMsg) => {
-        if (msg.t === 'text') appendText(msg.v)
-        else if (msg.t === 'error') throw new Error(msg.v)
-      }
-
-      for (;;) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() ?? ''
-        for (const line of lines) {
-          if (line.trim()) handle(JSON.parse(line) as StreamMsg)
-        }
-      }
-      if (buffer.trim()) handle(JSON.parse(buffer) as StreamMsg)
+      const answer = data.answer ?? ''
+      setThread((t) =>
+        t.map((m, i) => (i === t.length - 1 ? { ...m, content: answer } : m)),
+      )
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.')
       // Drop the empty assistant placeholder so it doesn't linger blank.
