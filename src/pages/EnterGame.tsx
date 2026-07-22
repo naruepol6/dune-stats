@@ -12,14 +12,21 @@ const inputCls =
 interface Row {
   player_id: string
   leader_id: string
+  vp: string // kept as text for the input; '' => not recorded
 }
 
 const EMPTY: Row[] = [
-  { player_id: '', leader_id: '' },
-  { player_id: '', leader_id: '' },
-  { player_id: '', leader_id: '' },
-  { player_id: '', leader_id: '' },
+  { player_id: '', leader_id: '', vp: '' },
+  { player_id: '', leader_id: '', vp: '' },
+  { player_id: '', leader_id: '', vp: '' },
+  { player_id: '', leader_id: '', vp: '' },
 ]
+
+/** A VP cell is valid when blank (optional) or a non-negative integer. */
+function vpValid(vp: string): boolean {
+  if (vp.trim() === '') return true
+  return /^\d+$/.test(vp.trim())
+}
 
 function today(): string {
   return new Date().toISOString().slice(0, 10)
@@ -53,9 +60,13 @@ export default function EnterGame() {
         if (game) {
           setPlayedOn(game.played_on.slice(0, 10))
           setNote(game.note ?? '')
-          const next = EMPTY.map(() => ({ player_id: '', leader_id: '' }))
+          const next = EMPTY.map(() => ({ player_id: '', leader_id: '', vp: '' }))
           for (const r of game.results) {
-            next[r.placement - 1] = { player_id: r.player_id, leader_id: r.leader_id }
+            next[r.placement - 1] = {
+              player_id: r.player_id,
+              leader_id: r.leader_id,
+              vp: r.vp == null ? '' : String(r.vp),
+            }
           }
           setRows(next)
         }
@@ -87,7 +98,9 @@ export default function EnterGame() {
   )
 
   const complete = rows.every((r) => r.player_id && r.leader_id)
-  const valid = complete && dupPlayers.size === 0 && dupLeaders.size === 0 && Boolean(playedOn)
+  const vpOk = rows.every((r) => vpValid(r.vp))
+  const valid =
+    complete && vpOk && dupPlayers.size === 0 && dupLeaders.size === 0 && Boolean(playedOn)
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -98,6 +111,7 @@ export default function EnterGame() {
       player_id: r.player_id,
       leader_id: r.leader_id,
       placement: i + 1,
+      vp: r.vp.trim() === '' ? null : Number(r.vp),
     }))
     try {
       if (editing && id) {
@@ -189,6 +203,19 @@ export default function EnterGame() {
                 placeholder="- leader -"
                 invalid={dupLeaders.has(row.leader_id)}
               />
+              <input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                step={1}
+                className={`w-16 shrink-0 text-right ${inputCls} ${
+                  vpValid(row.vp) ? '' : 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                }`}
+                placeholder="VP"
+                aria-label={`Victory points for rank ${i + 1}`}
+                value={row.vp}
+                onChange={(e) => setRow(i, { vp: e.target.value })}
+              />
             </Card>
           ))}
         </div>
@@ -196,6 +223,11 @@ export default function EnterGame() {
         {(dupPlayers.size > 0 || dupLeaders.size > 0) && (
           <p className="text-sm text-red-600 dark:text-red-400">
             Each player and each leader can appear only once per game.
+          </p>
+        )}
+        {!vpOk && (
+          <p className="text-sm text-red-600 dark:text-red-400">
+            VP must be a whole number of 0 or more (leave blank if not recorded).
           </p>
         )}
         {saveError && <ErrorBox message={saveError} />}

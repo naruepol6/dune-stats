@@ -59,12 +59,19 @@ export default function GameLog() {
                           {r.player_name}
                         </Link>
                       </span>
-                      <LeaderName
-                        id={r.leader_id}
-                        name={r.leader_name}
-                        imageUrl={r.image_url}
-                        className="text-slate-500 hover:underline dark:text-slate-400"
-                      />
+                      <span className="flex items-center gap-2">
+                        <LeaderName
+                          id={r.leader_id}
+                          name={r.leader_name}
+                          imageUrl={r.image_url}
+                          className="text-slate-500 hover:underline dark:text-slate-400"
+                        />
+                        {r.vp != null && (
+                          <span className="shrink-0 tabular-nums text-xs font-medium text-slate-400 dark:text-slate-500">
+                            {r.vp} VP
+                          </span>
+                        )}
+                      </span>
                     </li>
                   ))}
               </ol>

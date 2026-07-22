@@ -43,11 +43,19 @@ export async function getLeaders(includeHidden = false): Promise<Leader[]> {
   return unwrap(await q)
 }
 
-export async function addLeader(name: string, expansion?: string): Promise<Leader> {
+export async function addLeader(
+  name: string,
+  expansion?: string,
+  tier?: string,
+): Promise<Leader> {
   return unwrap(
     await supabase
       .from('leaders')
-      .insert({ name: name.trim(), expansion: expansion?.trim() || null })
+      .insert({
+        name: name.trim(),
+        expansion: expansion?.trim() || null,
+        tier: tier?.trim() || null,
+      })
       .select()
       .single(),
   )

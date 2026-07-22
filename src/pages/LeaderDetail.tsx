@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getLeaderResults, getLeaderStats } from '../lib/api'
 import { Badge, Card, ErrorBox, Loading, StatCards, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
+import { TierBadge } from '../components/TierBadge'
 import { RankMedal } from '../components/icons'
 import { avg, formatDate, pct } from '../lib/format'
 
@@ -41,6 +42,7 @@ export default function LeaderDetail() {
         </Link>
         <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold tracking-tight">
           <LeaderName id={id} name={stat.leader_name} imageUrl={stat.image_url} className="hover:underline" />
+          <TierBadge tier={stat.tier} />
           {stat.expansion && <Badge>{stat.expansion}</Badge>}
         </h1>
       </div>
@@ -114,7 +116,10 @@ export default function LeaderDetail() {
                       {r.player_name}
                     </Link>
                   </span>
-                  <span className="text-slate-400 dark:text-slate-500">{formatDate(r.played_on)}</span>
+                  <span className="flex items-center gap-3 text-slate-400 dark:text-slate-500">
+                    {r.vp != null && <span className="tabular-nums">{r.vp} VP</span>}
+                    <span>{formatDate(r.played_on)}</span>
+                  </span>
                 </li>
               ))}
             </ul>

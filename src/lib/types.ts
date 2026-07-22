@@ -9,6 +9,7 @@ export interface Leader {
   id: string
   name: string
   expansion: string | null
+  tier: string | null
   image_url: string | null
   hidden: boolean
   created_at: string
@@ -19,6 +20,7 @@ export interface ResultInput {
   player_id: string
   leader_id: string
   placement: number // 1..4
+  vp: number | null // victory points at game end; null if not recorded
 }
 
 /** A row from the results_detail view. */
@@ -32,6 +34,7 @@ export interface ResultDetail {
   leader_id: string
   leader_name: string
   image_url: string | null
+  vp: number | null
 }
 
 /** A game plus its 4 result rows, assembled for display. */
@@ -56,6 +59,7 @@ export interface LeaderStats {
   leader_id: string
   leader_name: string
   expansion: string | null
+  tier: string | null
   image_url: string | null
   hidden: boolean
   games: number

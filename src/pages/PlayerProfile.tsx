@@ -115,7 +115,10 @@ export default function PlayerProfile() {
                     <RankMedal place={r.placement} /> as{' '}
                     <LeaderName id={r.leader_id} name={r.leader_name} imageUrl={r.image_url} />
                   </span>
-                  <span className="text-slate-400 dark:text-slate-500">{formatDate(r.played_on)}</span>
+                  <span className="flex items-center gap-3 text-slate-400 dark:text-slate-500">
+                    {r.vp != null && <span className="tabular-nums">{r.vp} VP</span>}
+                    <span>{formatDate(r.played_on)}</span>
+                  </span>
                 </li>
               ))}
             </ul>
