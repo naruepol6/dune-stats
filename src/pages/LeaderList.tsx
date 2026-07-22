@@ -3,10 +3,21 @@ import { getLeaderStats } from '../lib/api'
 import { Bar, Card, ErrorBox, Loading, useAsync } from '../components/ui'
 import { LeaderName } from '../components/LeaderName'
 import { TierBadge } from '../components/TierBadge'
+import { SortTh, nextSort, type SortDir, type SortState } from '../components/SortHeader'
 import { avg, pct } from '../lib/format'
 import type { LeaderStats } from '../lib/types'
 
-type SortKey = 'tier' | 'winrate' | 'avg_placement' | 'games'
+type SortKey = 'tier' | 'winrate' | 'avg_placement' | 'games' | 'wins'
+
+// The "best first" direction for each column (used on the first click / on the
+// mobile sort dropdown).
+const DEFAULT_DIR: Record<SortKey, SortDir> = {
+  tier: 'asc',
+  winrate: 'desc',
+  avg_placement: 'asc',
+  games: 'desc',
+  wins: 'desc',
+}
 
 const TIER_GROUPS: { key: string; label: string }[] = [
   { key: 'A', label: 'Tier A' },
@@ -21,11 +32,18 @@ function tierRank(tier: string | null): number {
   return i === -1 ? 99 : i
 }
 
+function leaderValue(l: LeaderStats, key: SortKey): number {
+  if (key === 'tier') return tierRank(l.tier)
+  if (key === 'avg_placement') return l.avg_placement ?? 9
+  return l[key]
+}
+
 export default function LeaderList() {
   const { data, loading, error } = useAsync(getLeaderStats, [])
-  const [sort, setSort] = useState<SortKey>('avg_placement')
+  const [sort, setSort] = useState<SortState<SortKey>>({ key: 'avg_placement', dir: 'asc' })
   const [hidePlayed0, setHidePlayed0] = useState(true)
   const [groupByTier, setGroupByTier] = useState(false)
+  const onSort = (key: SortKey, defaultDir: SortDir) => setSort((s) => nextSort(s, key, defaultDir))
 
   if (loading) return <Loading />
   if (error) return <ErrorBox message={error} />
@@ -35,13 +53,8 @@ export default function LeaderList() {
 
   function sortRows(list: LeaderStats[]): LeaderStats[] {
     return [...list].sort((a, b) => {
-      if (sort === 'tier') {
-        const t = tierRank(a.tier) - tierRank(b.tier)
-        if (t !== 0) return t
-        return (a.avg_placement ?? 9) - (b.avg_placement ?? 9)
-      }
-      if (sort === 'avg_placement') return (a.avg_placement ?? 9) - (b.avg_placement ?? 9)
-      return (b[sort] as number) - (a[sort] as number)
+      const d = leaderValue(a, sort.key) - leaderValue(b, sort.key)
+      return (sort.dir === 'asc' ? d : -d) || a.leader_name.localeCompare(b.leader_name)
     })
   }
 
@@ -68,17 +81,23 @@ export default function LeaderList() {
             />
             Group by tier
           </label>
-          <label>
+          {/* Column headers drive sorting on wider screens; the card view has no
+              headers, so keep a compact sort control there. */}
+          <label className="sm:hidden">
             Sort{' '}
             <select
               className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
+              value={sort.key}
+              onChange={(e) => {
+                const key = e.target.value as SortKey
+                setSort({ key, dir: DEFAULT_DIR[key] })
+              }}
             >
               <option value="tier">Tier</option>
               <option value="winrate">Win rate</option>
               <option value="avg_placement">Avg placement</option>
               <option value="games">Games</option>
+              <option value="wins">Wins</option>
             </select>
           </label>
         </div>
@@ -99,7 +118,7 @@ export default function LeaderList() {
                     {groupRows.length}
                   </span>
                 </h2>
-                <LeaderTable rows={groupRows} />
+                <LeaderTable rows={groupRows} sort={sort} onSort={onSort} />
                 <LeaderCards rows={groupRows} />
               </div>
             )
@@ -107,7 +126,7 @@ export default function LeaderList() {
         </div>
       ) : (
         <>
-          <LeaderTable rows={sortRows(rows)} />
+          <LeaderTable rows={sortRows(rows)} sort={sort} onSort={onSort} />
           <LeaderCards rows={sortRows(rows)} />
         </>
       )}
@@ -115,18 +134,26 @@ export default function LeaderList() {
   )
 }
 
-function LeaderTable({ rows }: { rows: LeaderStats[] }) {
+function LeaderTable({
+  rows,
+  sort,
+  onSort,
+}: {
+  rows: LeaderStats[]
+  sort: SortState<SortKey>
+  onSort: (key: SortKey, defaultDir: SortDir) => void
+}) {
   return (
     <Card className="hidden overflow-hidden sm:block">
       <table className="w-full text-sm">
         <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
           <tr>
             <th className="p-3 font-medium">Leader</th>
-            <th className="p-3 font-medium">Tier</th>
-            <th className="p-3 text-right font-medium">GP</th>
-            <th className="p-3 text-right font-medium">W</th>
-            <th className="p-3 font-medium">Win rate</th>
-            <th className="p-3 text-right font-medium">Avg</th>
+            <SortTh sortKey="tier" label="Tier" defaultDir="asc" sort={sort} onSort={onSort} className="p-3" />
+            <SortTh sortKey="games" label="GP" defaultDir="desc" sort={sort} onSort={onSort} align="right" className="p-3" />
+            <SortTh sortKey="wins" label="W" defaultDir="desc" sort={sort} onSort={onSort} align="right" className="p-3" />
+            <SortTh sortKey="winrate" label="Win rate" defaultDir="desc" sort={sort} onSort={onSort} className="p-3" />
+            <SortTh sortKey="avg_placement" label="Avg" defaultDir="asc" sort={sort} onSort={onSort} align="right" className="p-3" />
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
